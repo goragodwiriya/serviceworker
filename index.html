@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Push Notification Demo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --warning-color: #FFC107;
+            --info-color: #2196F3;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --card-bg: #ffffff;
+            --hover-color: #1976D2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .notification-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background: var(--success-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .notification-status .material-icons {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .notification-status.disabled {
+            background: #ccc;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button .material-icons {
+            margin-right: 0.5rem;
+        }
+
+        .button.success {
+            background-color: var(--success-color);
+        }
+        .button.success:hover {
+            background-color: #388E3C;
+        }
+
+        .button.error {
+            background-color: var(--error-color);
+        }
+        .button.error:hover {
+            background-color: #D32F2F;
+        }
+
+        .button.warning {
+            background-color: var(--warning-color);
+            color: #333;
+        }
+        .button.warning:hover {
+            background-color: #FFA000;
+        }
+
+        .button.info {
+            background-color: var(--info-color);
+        }
+        .button.info:hover {
+            background-color: var(--hover-color);
+        }
+
+        .code-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .code-title .material-icons {
+            margin-right: 0.5rem;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1.5rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Web Push Notification</h1>
+            <p class="subtitle">ระบบแจ้งเตือนผ่านเว็บแบบง่าย ไม่ต้องใช้ Server</p>
+            <div class="notification-status">
+                <span class="material-icons">notifications_active</span>
+                พร้อมใช้งาน
+            </div>
+        </header>
+
+        <div class="button-grid">
+            <button onclick="showSuccess()" class="button success">
+                <span class="material-icons">check_circle</span>
+                แจ้งเตือนสำเร็จ
+            </button>
+            <button onclick="showError()" class="button error">
+                <span class="material-icons">error</span>
+                แจ้งเตือนข้อผิดพลาด
+            </button>
+            <button onclick="showWarning()" class="button warning">
+                <span class="material-icons">warning</span>
+                แจ้งเตือนคำเตือน
+            </button>
+            <button onclick="showInfo()" class="button info">
+                <span class="material-icons">info</span>
+                แจ้งเตือนข้อมูล
+            </button>
+        </div>
+
+        <section class="code-section">
+            <h2 class="code-title">
+                <span class="material-icons">code</span>
+                ตัวอย่างการใช้งาน
+            </h2>
+            <pre><code>// เริ่มต้นระบบแจ้งเตือน
+WebPushNotification.init();
+
+// ส่งการแจ้งเตือน
+WebPushNotification.success('การทำงานเสร็จสิ้น!');
+WebPushNotification.error('เกิดข้อผิดพลาด');
+WebPushNotification.warning('กรุณาตรวจสอบข้อมูล');
+WebPushNotification.info('คุณมีข้อความใหม่');</code></pre>
+        </section>
+
+        <footer class="footer">
+            <p>พัฒนาโดย <a href="https://github.com/goragodwiriya" target="_blank">Goragod Wiriya</a></p>
+            <p><a href="https://github.com/goragodwiriya/serviceworker" target="_blank">ดูโค้ดบน GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="web-push-notification.js"></script>
+    <script>
+        // เริ่มต้นระบบแจ้งเตือน
+        WebPushNotification.init().then(function(granted) {
+            const status = document.querySelector('.notification-status');
+            if (!granted) {
+                status.textContent = 'ไม่ได้รับอนุญาตให้แจ้งเตือน';
+                status.classList.add('disabled');
+            }
+        });
+
+        async function showSuccess() {
+            await WebPushNotification.success('การทำงานเสร็จสิ้น!', {
+                url: '#success'
+            });
+        }
+
+        async function showError() {
+            await WebPushNotification.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล', {
+                requireInteraction: true
+            });
+        }
+
+        async function showWarning() {
+            await WebPushNotification.warning('กรุณาตรวจสอบข้อมูลให้ครบถ้วน');
+        }
+
+        async function showInfo() {
+            await WebPushNotification.info('คุณมีข้อความใหม่ 3 ข้อความ', {
+                url: '#messages'
+            });
+        }
+    </script>
+</body>
+</html>
